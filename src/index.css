@@ -1,0 +1,106 @@
+@font-face {
+  font-family: 'Nunito Variable';
+  src: url('/fonts/nunito.woff2') format('woff2');
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fredoka Variable';
+  src: url('/fonts/fredoka.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #ece5cc;
+  --ink: #1d3c32;
+  --text: #324337;
+  --text-strong: #23463a;
+  --muted: #4d695b;
+  --panel: #fffdf6;
+  --panel-2: #f4eedb;
+  --panel-mint: #d4efe4;
+  --panel-mint-strong: #aac4a4;
+  --mint-body: #e2f2eb;
+  --mint-line: #d3e9df;
+  --border: #dcd3b4;
+  --border-soft: #ece5ca;
+  --teal: #237a68;
+  --teal-deep: #1b5f51;
+  --teal-bright: #4fd0b8;
+  --leaf: #508372;
+  --leaf-green: #a3bf62;
+  --accent: #3f6f60;
+  --accent-2: #98d4a8;
+  --danger: #a33b2e;
+  --danger-wash: #fbefec;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 2px 0 rgba(35, 70, 58, 0.07);
+  --shadow-raised: 0 3px 0 rgba(35, 70, 58, 0.1);
+  --shadow-pop: 0 4px 0 rgba(35, 70, 58, 0.08), 0 0 0 1px rgba(35, 70, 58, 0.04);
+  --font-body: 'Nunito Variable', 'Nunito', ui-rounded, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Fredoka Variable', 'Fredoka', 'Nunito Variable', ui-rounded, system-ui, sans-serif;
+
+  font-family: var(--font-body);
+  color: var(--text);
+  background-color: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 15% 0%, rgba(255, 255, 255, 0.55), transparent 30rem),
+    radial-gradient(circle, rgba(80, 131, 114, 0.14) 1.15px, transparent 1.6px);
+  background-size: auto, 22px 22px;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+a {
+  color: var(--teal-deep);
+  text-underline-offset: 0.18em;
+}
+
+img {
+  display: block;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+::selection {
+  background: var(--teal-bright);
+  color: var(--ink);
+}
