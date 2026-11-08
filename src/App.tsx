@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { CalculatorPage } from './pages/CalculatorPage'
+import { GlobalVillagePage } from './pages/GlobalVillagePage'
 import { ShoppingListDrawer } from './components/ShoppingListDrawer'
 import { RecipesPage } from './pages/RecipesPage'
 import { useRoute } from './lib/useRoute'
@@ -10,6 +11,8 @@ import './App.css'
 function App() {
   const { path, navigate } = useRoute()
   const isCalculator = path.startsWith('/calculator')
+  const isGlobalVillage = path.startsWith('/global-village')
+  const isRecipes = !isCalculator && !isGlobalVillage
   const [shoppingList, setShoppingList] = useState<ShoppingList>(loadShoppingList)
   const [isListOpen, setIsListOpen] = useState(false)
 
@@ -18,13 +21,29 @@ function App() {
   }, [shoppingList])
 
   useEffect(() => {
-    document.title = isCalculator ? 'Pantry Planner · Loftia Cooking Helper' : 'Loftia Cooking Helper'
-  }, [isCalculator])
+    if (isGlobalVillage) {
+      document.title = 'Global Village · Loftia Cooking Helper'
+    } else if (isCalculator) {
+      document.title = 'Pantry Planner · Loftia Cooking Helper'
+    } else {
+      document.title = 'Loftia Cooking Helper'
+    }
+  }, [isCalculator, isGlobalVillage])
 
   const listCount = Object.values(shoppingList).reduce((total, qty) => total + qty, 0)
 
   const addRecipeToList = (slug: string) => {
     setShoppingList((current) => ({ ...current, [slug]: Math.min(999, (current[slug] ?? 0) + 1) }))
+  }
+
+  const addRecipesToList = (slugs: string[]) => {
+    setShoppingList((current) => {
+      const next = { ...current }
+      for (const slug of slugs) {
+        next[slug] = Math.min(999, (next[slug] ?? 0) + 1)
+      }
+      return next
+    })
   }
 
   const setRecipeCount = (slug: string, qty: number) => {
@@ -62,8 +81,8 @@ function App() {
         <nav className="main-nav" aria-label="Pages">
           <a
             href="/"
-            className={isCalculator ? '' : 'is-active'}
-            aria-current={isCalculator ? undefined : 'page'}
+            className={isRecipes ? 'is-active' : ''}
+            aria-current={isRecipes ? 'page' : undefined}
             onClick={(event) => {
               event.preventDefault()
               navigate('/')
@@ -81,6 +100,17 @@ function App() {
             }}
           >
             Pantry planner
+          </a>
+          <a
+            href="/global-village"
+            className={isGlobalVillage ? 'is-active' : ''}
+            aria-current={isGlobalVillage ? 'page' : undefined}
+            onClick={(event) => {
+              event.preventDefault()
+              navigate('/global-village')
+            }}
+          >
+            Global Village
           </a>
         </nav>
 
@@ -107,11 +137,25 @@ function App() {
       </header>
 
       <main>
-        {isCalculator ? <CalculatorPage /> : <RecipesPage shoppingList={shoppingList} onAddRecipe={addRecipeToList} />}
+        {isGlobalVillage ? (
+          <GlobalVillagePage onAddRecipes={addRecipesToList} />
+        ) : isCalculator ? (
+          <CalculatorPage />
+        ) : (
+          <RecipesPage shoppingList={shoppingList} onAddRecipe={addRecipeToList} />
+        )}
 
         <footer className="footer">
           <div>
-            {isCalculator ? (
+            {isGlobalVillage ? (
+              <>
+                <strong>How the daily requests work</strong>
+                <p>
+                  Requests rotate daily at 03:00 UTC. Shopping costs use Hazel seed and Kun ingredient prices, and
+                  checked-off dishes are removed from the prep and shopping pane.
+                </p>
+              </>
+            ) : isCalculator ? (
               <>
                 <strong>How the optimizer works</strong>
                 <p>
