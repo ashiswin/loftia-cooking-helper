@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import { CalculatorPage } from './pages/CalculatorPage'
 import { RecipesPage } from './pages/RecipesPage'
 import { useRoute } from './lib/useRoute'
@@ -104,6 +105,7 @@ function App() {
           </div>
         </footer>
       </main>
+      <Analytics route={path} path={path} />
     </div>
   )
 }
