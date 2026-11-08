@@ -241,12 +241,10 @@ export function GlobalVillagePage({ onAddRecipes }: { onAddRecipes: (slugs: stri
                   <div className="plan-stat is-positive">
                     <span>Shop cost</span>
                     <strong><Dew value={shopping.shopTotal} /></strong>
-                    <small>dew</small>
                   </div>
                   <div className="plan-stat">
                     <span>Reward left</span>
                     <strong className="gv-sols-value"><img src="/ui/currency-sols.webp" alt="" />{remainingReward}</strong>
-                    <small>sols</small>
                   </div>
                 </div>
 

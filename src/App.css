@@ -86,9 +86,9 @@
   grid-template-columns: minmax(0, 1.22fr) minmax(280px, 0.78fr);
   gap: 1rem;
   overflow: hidden;
-  padding: clamp(1.5rem, 3.5vw, 2.6rem);
+  padding: clamp(1.35rem, 3vw, 2rem);
   border: 1px solid var(--border);
-  border-radius: 28px;
+  border-radius: 26px;
   background:
     radial-gradient(95% 80% at 72% 5%, rgba(255, 255, 255, 0.88), transparent 60%),
     linear-gradient(160deg, #f7f1dd 0%, #e2f2eb 68%, #d0eadf 100%);
@@ -131,6 +131,15 @@
   width: 16px;
   height: 16px;
   object-fit: contain;
+}
+
+.eyebrow-blueprint {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  background: var(--teal-deep);
+  -webkit-mask: url('/ui/blueprint.webp') center / contain no-repeat;
+  mask: url('/ui/blueprint.webp') center / contain no-repeat;
 }
 
 .hero h1 {
@@ -2534,7 +2543,7 @@
   margin-top: 0.75rem;
 }
 
-.gv-sols-value {
+.plan-stat .gv-sols-value {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -2620,7 +2629,8 @@
     justify-content: flex-start;
   }
 
-  .hero {
+  .hero,
+  .calc-hero {
     padding: 1.25rem;
     border-radius: 22px;
   }
