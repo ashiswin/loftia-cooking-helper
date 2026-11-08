@@ -2,6 +2,7 @@ import type { Recipe } from '../data/gameData'
 import { Dew } from './Dew'
 import { Sprite } from './Sprite'
 import { formatMinutes, formatRate, formatSigned } from '../lib/format'
+import type { SaplingSource } from '../lib/pricing'
 
 type TimeMode = 'parallel' | 'sequential'
 
@@ -13,7 +14,9 @@ type RecipeRowProps = {
   timeMode: TimeMode
   expanded: boolean
   onToggle: () => void
-  freeGather: boolean
+  gatheredFree: boolean
+  saplingSource: SaplingSource
+  ingredientCosts: Record<string, number>
 }
 
 const sourceLabel: Record<string, string> = {
@@ -32,9 +35,9 @@ function Chevron({ open }: { open: boolean }) {
   )
 }
 
-function sourceNote(ing: Recipe['ingredients'][number], freeGather: boolean) {
-  if (ing.source === 'gather') return freeGather ? 'free' : 'sell value'
-  if (ing.source === 'sapling') return freeGather ? 'free' : 'sell value'
+function sourceNote(ing: Recipe['ingredients'][number], gatheredFree: boolean, saplingSource: SaplingSource) {
+  if (ing.source === 'gather') return gatheredFree ? 'free' : 'sell value'
+  if (ing.source === 'sapling') return saplingSource === 'forage' ? 'foraged' : 'shop value'
   if (ing.source === 'craft') return ing.costNote
   return ing.costNote.replace(/\s+\d+$/, '')
 }
@@ -56,9 +59,12 @@ export function RecipeRow({
   timeMode,
   expanded,
   onToggle,
-  freeGather,
+  gatheredFree,
+  saplingSource,
+  ingredientCosts,
 }: RecipeRowProps) {
   const rate = time > 0 ? profit / (time / 60) : profit > 0 ? Number.POSITIVE_INFINITY : 0
+  const pricingNote = `${gatheredFree ? 'gathered free' : 'sell value'} · saplings ${saplingSource === 'forage' ? 'foraged' : 'shopped'}`
 
   return (
     <article className={`recipe-row ${expanded ? 'is-expanded' : ''}`}>
@@ -127,7 +133,7 @@ export function RecipeRow({
             <section className="detail-card">
               <div className="detail-card-head">
                 <h3>Ingredient breakdown</h3>
-                <span>{freeGather ? 'gathered = free' : 'gathered at sell value'}</span>
+                <span>{pricingNote}</span>
               </div>
               <div className="ing-table">
                 <div className="ing-table-head">
@@ -138,15 +144,15 @@ export function RecipeRow({
                   <span>Line</span>
                 </div>
                 {recipe.ingredients.map((ing) => {
-                  const unit = freeGather ? ing.unitCostFree : ing.unitCost
-                  const line = freeGather ? ing.costFree : ing.cost
+                  const unit = ingredientCosts[ing.slug] ?? 0
+                  const line = unit * ing.qty
                   return (
                     <div className="ing-table-row" key={ing.slug}>
                       <span className="ing-name-cell">
                         <Sprite src={ing.icon} alt={ing.name} color={ing.color} size="sm" />
                         <span>
                           <strong>{ing.name}</strong>
-                          <small title={ing.costNote}>{sourceLabel[ing.source]} · {sourceNote(ing, freeGather)}</small>
+                          <small title={ing.costNote}>{sourceLabel[ing.source]} · {sourceNote(ing, gatheredFree, saplingSource)}</small>
                         </span>
                       </span>
                       <span data-label="Qty">×{ing.qty}</span>
@@ -166,7 +172,7 @@ export function RecipeRow({
             <section className="detail-card">
               <div className="detail-card-head">
                 <h3>Profit snapshot</h3>
-                <span>{freeGather ? 'gathered free' : 'gathered at sell value'}</span>
+                <span>{pricingNote}</span>
               </div>
               <dl className="mini-stats">
                 <div>

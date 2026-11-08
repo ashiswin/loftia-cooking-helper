@@ -9,7 +9,12 @@ A fan-made React + TypeScript tool for Loftia that lists every cooking recipe wi
 - Net profit and profit-per-hour calculations
 - Parallel vs. one-plot grow-time estimates
 - Sortable columns, station-level filters, search, and a gathered-material cost toggle
+- **Pantry Planner**: enter your inventory and get an exact, profit-maximizing cook plan
 - Responsive Loftia Codex-inspired styling
+
+## Pantry Planner
+
+The planner models recipes as an integer linear program solved with [YALPS](https://www.npmjs.com/package/yalps). Each recipe is a variable, each ingredient is a constraint, and the objective maximizes the selected profit basis: raw ingredient value gain, recipe margin against shop/seed costs, or gross sales.
 
 ## Development
 
