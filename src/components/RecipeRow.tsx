@@ -17,6 +17,8 @@ type RecipeRowProps = {
   gatheredFree: boolean
   saplingSource: SaplingSource
   ingredientCosts: Record<string, number>
+  onAddToList: () => void
+  listCount: number
 }
 
 const sourceLabel: Record<string, string> = {
@@ -42,6 +44,17 @@ function sourceNote(ing: Recipe['ingredients'][number], gatheredFree: boolean, s
   return ing.costNote.replace(/\s+\d+$/, '')
 }
 
+function CartPlusIcon() {
+  return (
+    <svg className="cart-plus-glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M2.5 3.5h2l1.6 8.1a1.5 1.5 0 0 0 1.5 1.2h6.7a1.5 1.5 0 0 0 1.5-1.2l1-5.1H5.2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="8" cy="15.7" r="1.1" fill="currentColor" />
+      <circle cx="14.5" cy="15.7" r="1.1" fill="currentColor" />
+      <path d="M14.2 2.8v4M12.2 4.8h4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 function ClockIcon() {
   return (
     <svg className="inline-glyph" viewBox="0 0 20 20" aria-hidden="true">
@@ -62,6 +75,8 @@ export function RecipeRow({
   gatheredFree,
   saplingSource,
   ingredientCosts,
+  onAddToList,
+  listCount,
 }: RecipeRowProps) {
   const rate = time > 0 ? profit / (time / 60) : profit > 0 ? Number.POSITIVE_INFINITY : 0
   const pricingNote = `${gatheredFree ? 'gathered free' : 'sell value'} · saplings ${saplingSource === 'forage' ? 'foraged' : 'shopped'}`
@@ -105,6 +120,19 @@ export function RecipeRow({
         <div className="num-cell rate-cell" data-label="Dew / hr">
           <span className={profit < 0 ? 'is-negative-text' : ''}>{formatRate(rate)}</span>
           <small>dew/hr</small>
+        </div>
+
+        <div className="list-cell">
+          <button
+            type="button"
+            className={`add-list-btn ${listCount > 0 ? 'is-added' : ''}`}
+            onClick={onAddToList}
+            aria-label={`Add ${recipe.name} to shopping list`}
+            title={listCount > 0 ? `${listCount} batch${listCount === 1 ? '' : 'es'} on your list` : 'Add to shopping list'}
+          >
+            <CartPlusIcon />
+            <span>{listCount > 0 ? `×${listCount}` : 'Add'}</span>
+          </button>
         </div>
 
         <button

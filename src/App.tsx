@@ -1,17 +1,43 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { CalculatorPage } from './pages/CalculatorPage'
+import { ShoppingListDrawer } from './components/ShoppingListDrawer'
 import { RecipesPage } from './pages/RecipesPage'
 import { useRoute } from './lib/useRoute'
+import { loadShoppingList, saveShoppingList, type ShoppingList } from './lib/shoppingList'
 import './App.css'
 
 function App() {
   const { path, navigate } = useRoute()
   const isCalculator = path.startsWith('/calculator')
+  const [shoppingList, setShoppingList] = useState<ShoppingList>(loadShoppingList)
+  const [isListOpen, setIsListOpen] = useState(false)
+
+  useEffect(() => {
+    saveShoppingList(shoppingList)
+  }, [shoppingList])
 
   useEffect(() => {
     document.title = isCalculator ? 'Pantry Planner · Loftia Cooking Helper' : 'Loftia Cooking Helper'
   }, [isCalculator])
+
+  const listCount = Object.values(shoppingList).reduce((total, qty) => total + qty, 0)
+
+  const addRecipeToList = (slug: string) => {
+    setShoppingList((current) => ({ ...current, [slug]: Math.min(999, (current[slug] ?? 0) + 1) }))
+  }
+
+  const setRecipeCount = (slug: string, qty: number) => {
+    setShoppingList((current) => {
+      const next = { ...current }
+      if (qty <= 0) {
+        delete next[slug]
+      } else {
+        next[slug] = Math.min(999, Math.floor(qty))
+      }
+      return next
+    })
+  }
 
   return (
     <div className="app-shell">
@@ -59,7 +85,21 @@ function App() {
         </nav>
 
         <div className="topbar-right">
-          <span className="fan-badge">Fan-made</span>
+          <button
+            type="button"
+            className={`cart-button ${listCount > 0 ? 'has-items' : ''}`}
+            onClick={() => setIsListOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={isListOpen}
+          >
+            <svg className="cart-glyph" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M2.5 3.5h2l1.6 8.1a1.5 1.5 0 0 0 1.5 1.2h6.7a1.5 1.5 0 0 0 1.5-1.2l1-5.1H5.2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="8" cy="15.7" r="1.1" fill="currentColor" />
+              <circle cx="14.5" cy="15.7" r="1.1" fill="currentColor" />
+            </svg>
+            <span>Shopping list</span>
+            {listCount > 0 && <b>{listCount}</b>}
+          </button>
           <a className="codex-link" href="https://loftiacodex.com/items?category=Resources&subcategory=Foods" target="_blank" rel="noreferrer">
             Data from Loftia Codex <span aria-hidden="true">↗</span>
           </a>
@@ -67,7 +107,7 @@ function App() {
       </header>
 
       <main>
-        {isCalculator ? <CalculatorPage /> : <RecipesPage />}
+        {isCalculator ? <CalculatorPage /> : <RecipesPage shoppingList={shoppingList} onAddRecipe={addRecipeToList} />}
 
         <footer className="footer">
           <div>
@@ -105,6 +145,13 @@ function App() {
           </div>
         </footer>
       </main>
+      <ShoppingListDrawer
+        open={isListOpen}
+        list={shoppingList}
+        onClose={() => setIsListOpen(false)}
+        onSetRecipeCount={setRecipeCount}
+        onClear={() => setShoppingList({})}
+      />
       <Analytics route={path} path={path} />
     </div>
   )

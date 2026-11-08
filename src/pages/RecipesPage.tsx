@@ -6,6 +6,7 @@ import { Sprite } from '../components/Sprite'
 import { formatMinutes, formatRate, formatSigned } from '../lib/format'
 import { Segmented } from '../components/Segmented'
 import { priceRecipe, type SaplingSource } from '../lib/pricing'
+import type { ShoppingList } from '../lib/shoppingList'
 
 type SortKey = 'name' | 'cost' | 'sell' | 'profit' | 'time' | 'rate' | 'level'
 type SortDir = 'asc' | 'desc'
@@ -52,7 +53,13 @@ function SortButton({
   )
 }
 
-export function RecipesPage() {
+export function RecipesPage({
+  shoppingList,
+  onAddRecipe,
+}: {
+  shoppingList: ShoppingList
+  onAddRecipe: (slug: string) => void
+}) {
   const [query, setQuery] = useState('')
   const [level, setLevel] = useState('all')
   const [type, setType] = useState('all')
@@ -312,6 +319,7 @@ export function RecipesPage() {
           <SortButton sortKey="profit" sort={sort} onSort={toggleSort} className="head-num">Profit</SortButton>
           <SortButton sortKey="time" sort={sort} onSort={toggleSort} className="head-num">Grow time</SortButton>
           <SortButton sortKey="rate" sort={sort} onSort={toggleSort} className="head-num">Dew / hr</SortButton>
+          <span className="head-list">List</span>
           <span className="head-expand" aria-hidden="true" />
         </div>
 
@@ -329,6 +337,8 @@ export function RecipesPage() {
               gatheredFree={gatheredFree}
               saplingSource={saplingSource}
               ingredientCosts={ingredientCosts}
+              onAddToList={() => onAddRecipe(recipe.slug)}
+              listCount={shoppingList[recipe.slug] ?? 0}
             />
           ))}
           {view.length === 0 && (

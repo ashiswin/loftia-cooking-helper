@@ -10,6 +10,7 @@ A fan-made React + TypeScript tool for Loftia that lists every cooking recipe wi
 - Parallel vs. one-plot grow-time estimates
 - Sortable columns, station-level filters, search, and a gathered-material cost toggle
 - **Pantry Planner**: enter your inventory and get an exact, profit-maximizing cook plan
+- Shopping list drawer: add recipes and get aggregated Hazel seed and Kun ingredient totals
 - Responsive Loftia Codex-inspired styling
 
 ## Pantry Planner
