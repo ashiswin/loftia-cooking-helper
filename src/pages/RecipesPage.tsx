@@ -165,7 +165,7 @@ export function RecipesPage({
     <>
       <section className="hero">
         <div className="hero-copy">
-          <span className="eyebrow"><span className="eyebrow-glyph eyebrow-blueprint" aria-hidden="true" /> Farmer's market math</span>
+          <span className="eyebrow"><img src="/icons/carrot.webp" alt="" /> Farmer's market math</span>
           <h1>
             Cook smarter.
             <span>Grow richer.</span>

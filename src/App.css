@@ -133,14 +133,6 @@
   object-fit: contain;
 }
 
-.eyebrow-blueprint {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 auto;
-  background: var(--teal-deep);
-  -webkit-mask: url('/ui/blueprint.webp') center / contain no-repeat;
-  mask: url('/ui/blueprint.webp') center / contain no-repeat;
-}
 
 .hero h1 {
   margin-top: 0.9rem;
