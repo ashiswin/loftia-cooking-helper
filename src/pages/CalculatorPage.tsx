@@ -1,4 +1,4 @@
-import { useDeferredValue, useMemo, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { Segmented } from '../components/Segmented'
 import { Sprite } from '../components/Sprite'
 import { formatDew, formatSigned } from '../lib/format'
@@ -24,6 +24,8 @@ const stationOptions = [
   { value: '2', label: 'Lv 2' },
   { value: '3', label: 'Lv 3' },
 ]
+
+const STORAGE_KEY = 'loftia-pantry-inventory-v1'
 
 const sourceLabel: Record<string, string> = {
   seed: 'Seed',
@@ -76,6 +78,34 @@ function qtyOf(inventory: Inventory, slug: string) {
   return Math.max(0, Math.floor(inventory[slug] ?? 0))
 }
 
+function loadInventory(): Inventory {
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY)
+    if (!saved) return {}
+    const parsed: unknown = JSON.parse(saved)
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {}
+    const next: Inventory = {}
+    for (const ingredient of pantryIngredients) {
+      const value = (parsed as Record<string, unknown>)[ingredient.slug]
+      if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+        next[ingredient.slug] = Math.min(9999, Math.floor(value))
+      }
+    }
+    return next
+  } catch {
+    return {}
+  }
+}
+
+function saveInventory(inventory: Inventory) {
+  try {
+    const stock = Object.fromEntries(Object.entries(inventory).filter(([, qty]) => qty > 0))
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(stock))
+  } catch {
+    // Storage can be unavailable in private browsing; the planner still works without it.
+  }
+}
+
 function PantryRow({
   ingredient,
   qty,
@@ -120,11 +150,15 @@ function PantryRow({
 }
 
 export function CalculatorPage() {
-  const [inventory, setInventory] = useState<Inventory>({})
+  const [inventory, setInventory] = useState<Inventory>(loadInventory)
   const [basis, setBasis] = useState<ProfitBasis>('gross')
   const [stationLevel, setStationLevel] = useState('3')
   const [search, setSearch] = useState('')
   const [gatheredMode, setGatheredMode] = useState<GatheredMode>('market')
+
+  useEffect(() => {
+    saveInventory(inventory)
+  }, [inventory])
 
   const deferredInventory = useDeferredValue(inventory)
   const result = useMemo(
